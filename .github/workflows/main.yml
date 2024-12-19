@@ -86,7 +86,6 @@ jobs:
         id: cache-sdk
         uses: actions/cache@v3
         with:
-          python-version: '3.13'
           path: sdk
           key: openwrt-sdk-snapshot-x86-64
 
@@ -94,8 +93,6 @@ jobs:
         if: steps.cache-sdk.outputs.cache-hit != 'true'
         env:
           url_sdk: https://downloads.openwrt.org/snapshots/targets/x86/64/openwrt-sdk-x86-64_gcc-13.3.0_musl.Linux-x86_64.tar.zst
-        with:
-          python-version: '3.13'
         run: |
           wget ${{ env.url_sdk }}
           file_name=$(echo ${{env.url_sdk}} | awk -F/ '{print $NF}')
@@ -112,8 +109,6 @@ jobs:
           make download -j8
 
       - name: Configure neobird (master)
-        with:
-          python-version: '3.13'
         run: |
           cd sdk
           ./scripts/feeds install luci-theme-neobird
@@ -127,8 +122,6 @@ jobs:
 
       - name: Compile neobird (master)
         id: compile
-        with:
-          python-version: '3.13'
         run: |
           cd sdk
           echo "make package/luci-theme-neobird/{clean,compile} -j$(nproc)"

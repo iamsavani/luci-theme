@@ -102,7 +102,7 @@ jobs:
           echo "src-git-full packages https://github.com/openwrt/packages.git;master" >> feeds.conf
           echo "src-git-full luci https://github.com/openwrt/luci.git;master" >> feeds.conf
           echo "src-git-full routing https://git.openwrt.org/feed/routing.git;master"  >> feeds.conf
-          git clone -b master https://github.com/${{ github.repository }}.git package/downloads/luci-theme-neobird
+          git clone -b main https://github.com/${{ github.repository }}.git package/downloads/luci-theme-neobird
           ./scripts/feeds update -a
           echo "CONFIG_PACKAGE_luci-theme-neobird=m" > .config
           ./scripts/feeds install -d n luci-theme-neobird

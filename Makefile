@@ -9,6 +9,7 @@ include $(TOPDIR)/rules.mk
 LUCI_TITLE:=LuCI Neobird Theme
 LUCI_DEPENDS:=+luci-base
 
+PKG_NAME:=luci-theme-neobird
 PKG_LICENSE:=Apache-2.0
 
 define Package/luci-theme-neobird/postrm

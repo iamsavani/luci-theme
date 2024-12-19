@@ -1,20 +1,24 @@
+#
+# Copyright (C) 2008-2014 The LuCI Team <luci@lists.subsignal.org>
+#
+# This is free software, licensed under the Apache License, Version 2.0 .
+#
+
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=lucithemeneobird
-PKG_VERSION:=1.0
-PKG_RELEASE:=1
+LUCI_TITLE:=LuCI NeoBird theme
+LUCI_DEPENDS:=+luci-base
 
-include $(INCLUDE_DIR)/package.mk
+PKG_LICENSE:=Apache-2.0
 
-define Package/lucithemeneobird
-  SECTION:=luci
-  CATEGORY:=Themes
-  TITLE:=Neobird Theme for LuCI
+define Package/luci-theme-neobird/postrm
+#!/bin/sh
+[ -n "$${IPKG_INSTROOT}" ] || {
+	uci -q delete luci.themes.NeoBird
+	uci commit luci
+}
 endef
 
-define Package/lucithemeneobird/install
-  $(INSTALL_DIR) $(1)/usr/lib/lua/luci/view/themes/neobird
-  $(CP) ./theme/* $(1)/usr/lib/lua/luci/view/themes/neobird/
-endef
+include ../../luci.mk
 
-$(eval $(call BuildPackage,lucithemeneobird))
+# call BuildPackage - OpenWrt buildroot signature

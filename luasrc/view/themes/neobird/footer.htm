@@ -1,41 +1,15 @@
-<%
-    local ver = require "luci.version"
-    local disp = require "luci.dispatcher"
-
-    -- Updated context handling for OpenWrt 23
-    local request = disp.context.request or {}
-    local category = request[1] or ""
-    local tree = disp.node()
-    local categories = disp.node_childs(tree) or {}
-%>
+<% local ver = require "luci.version" %>
                 </div>
                 <footer class="footer" style="text-align:center">
                     <a href="https://github.com/openwrt/luci">Powered by <%= ver.luciname or "LuCI" %></a> |
                     <a href="https://openwrt.org/"><%= ver.distversion or "OpenWrt" %></a>
-                    <br />
-                    <% if #categories > 1 then %>
-                    <ul class="breadcrumb pull-right" id="modemenu">
-                        <% for _, r in ipairs(categories) do
-                            local node = tree.nodes[r]
-                            if node then %>
-                                <li<% if category == r then %> class="active"<%end%>>
-                                    <a href="<%= disp.build_url(r) %>">
-                                        <%= striptags(translate(node.title)) %>
-                                    </a>
-                                    <% if _ < #categories then %> <span class="divider">|</span><% end %>
-                                </li>
-                            <% end
-                        end %>
-                    </ul>
-                    <% end %>
                 </footer>
             </div>
         </div>
 
     <script>
-        var luciLocation = <%= luci.util.serialize_json(disp.context.path or {}) %>;
+        var luciLocation = <%= luci.http.write_json(luci.dispatcher.context.path) %>;
     </script>
-    <script src="<%=media%>/js/jquery.min.js?v=<%= ver.luciversion or "1.0" %>"></script>
-    <script src="<%=media%>/js/script.js?v=<%= ver.luciversion or "1.0" %>"></script>
-</body>
+    <script src="<%=media%>/js/jquery.min.js?v=<%= ver.luciversion or '1.0' %>" />
+    <script src="<%=media%>/js/script.js?v=<%= ver.luciversion or '1.0' %>" />
 </html>

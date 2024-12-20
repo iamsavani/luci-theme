@@ -126,7 +126,7 @@ jobs:
           cd sdk
           echo "make package/luci-theme-neobird/{clean,compile} -j$(nproc)"
           make package/luci-theme-neobird/{clean,compile} -j$(nproc)
-          mv bin/packages/mips_24kc//base/ ../
+          mv bin/packages/mips_24kc/base/ ../
           rm .config .config.old
           cd ..
           echo "status=success" >> $GITHUB_OUTPUT

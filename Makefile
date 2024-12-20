@@ -6,17 +6,15 @@
 
 include $(TOPDIR)/rules.mk
 
-THEME_NAME:=neobird
-THEME_TITLE:=neobird
-
-PKG_NAME:=luci-theme-$(THEME_NAME)
-PKG_VERSION:=1
-
-PKG_RELEASE:=1
-
 LUCI_TITLE:=NeoBird Theme
-LUCI_DEPENDS:=+liblua
+LUCI_DEPENDS:=+curl +jsonfilter
+PKG_VERSION:=1
+PKG_RELEASE:=20230420
+
+CONFIG_LUCI_CSSTIDY:=
 
 include $(TOPDIR)/feeds/luci/luci.mk
+
+# call BuildPackage - OpenWrt buildroot signature
 
 

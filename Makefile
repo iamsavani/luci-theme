@@ -15,7 +15,7 @@ PKG_VERSION:=1
 PKG_RELEASE:=1
 
 LUCI_TITLE:=NeoBird Theme
-LUCI_DEPENDS:=
+LUCI_DEPENDS:=+liblua
 
 include $(TOPDIR)/feeds/luci/luci.mk
 

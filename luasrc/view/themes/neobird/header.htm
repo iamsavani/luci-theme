@@ -9,17 +9,8 @@
 
 	local node = disp.context.dispatched
 
-	local fs = require "nixio.fs"
-	local nutil = require "nixio.util"
-	local uci = require 'luci.model.uci'.cursor()
-
 	-- send as HTML5
 	http.prepare_content("text/html")
-
-	math.randomseed(os.time())
-
-	-- Brand name
-	local brand_name = boardinfo.hostname or "?"
 -%>
 
 <!DOCTYPE html>

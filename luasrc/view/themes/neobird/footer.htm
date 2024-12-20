@@ -1,21 +1,31 @@
 <%
-	local ver = require "luci.version"
-	local disp = require "luci.dispatcher"
-	local request  = disp.context.path
-	local category = request[1]
-	local tree = disp.node()
-	local categories = disp.node_childs(tree)
+    local ver = require "luci.version"
+    local disp = require "luci.dispatcher"
+
+    -- Updated context handling for OpenWrt 23
+    local request = disp.context.request or {}
+    local category = request[1] or ""
+    local tree = disp.node()
+    local categories = disp.node_childs(tree) or {}
 %>
                 </div>
                 <footer class="footer" style="text-align:center">
-                    <a href="https://github.com/openwrt/luci">Powered by <%= ver.luciname %></a> |
-                    <a href="https://www.lede-project.org/"><%= ver.distversion %></a>
+                    <a href="https://github.com/openwrt/luci">Powered by <%= ver.luciname or "LuCI" %></a> |
+                    <a href="https://openwrt.org/"><%= ver.distversion or "OpenWrt" %></a>
                     <br />
                     <% if #categories > 1 then %>
                     <ul class="breadcrumb pull-right" id="modemenu">
-                        <% for i, r in ipairs(categories) do %>
-                        <li<% if request[1] == r then %> class="active"<%end%>><a href="<%=controller%>/<%=r%>/"><%=striptags(translate(tree.nodes[r].title))%></a> <span class="divider">|</span></li>
-                        <% end %>
+                        <% for _, r in ipairs(categories) do
+                            local node = tree.nodes[r]
+                            if node then %>
+                                <li<% if category == r then %> class="active"<%end%>>
+                                    <a href="<%= disp.build_url(r) %>">
+                                        <%= striptags(translate(node.title)) %>
+                                    </a>
+                                    <% if _ < #categories then %> <span class="divider">|</span><% end %>
+                                </li>
+                            <% end
+                        end %>
                     </ul>
                     <% end %>
                 </footer>
@@ -23,9 +33,9 @@
         </div>
 
     <script>
-        var luciLocation = <%= luci.http.write_json(luci.dispatcher.context.path) %>;
+        var luciLocation = <%= luci.util.serialize_json(disp.context.path or {}) %>;
     </script>
-    <script src="<%=media%>/js/jquery.min.js?v=<%= ver.luciversion %>"></script>
-    <script src="<%=media%>/js/script.js?v=<%= ver.luciversion %>"></script>
+    <script src="<%=media%>/js/jquery.min.js?v=<%= ver.luciversion or "1.0" %>"></script>
+    <script src="<%=media%>/js/script.js?v=<%= ver.luciversion or "1.0" %>"></script>
 </body>
 </html>

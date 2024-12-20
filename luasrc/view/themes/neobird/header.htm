@@ -5,11 +5,13 @@
 	local http = require "luci.http"
 	local disp = require "luci.dispatcher"
 
-	local boardinfo = util.ubus("system", "board")
-	local boardinfo={}
-	boardinfo.hostname=sys.hostname()
+	local ubus = require "ubus"
+	local conn = ubus.connect()
+	local boardinfo = conn:call("system", "board") or {}
+	boardinfo.hostname = sys.hostname()
+	conn:close()
 
-	local request  = disp.context.path
+	local request = disp.context.request or {}
 	local request2 = disp.context.request
 
 	local category = request[1]
@@ -225,7 +227,7 @@
 		 <div class="darkMask"></div>
 		 <div id="maincontent">
 			 <div class="container">
-				 <%- if luci.sys.process.info("uid") == 0 and luci.sys.user.getuser("root") and not luci.sys.user.getpasswd("root") then -%>
+				 <%- if luci.sys.user.check_user("root") == 0 and luci.sys.user.getuser("root") and not luci.sys.user.getpasswd("root") then -%>
 					 <div class="alert-message warning">
 						 <h4><%:No password set!%></h4>
 						 <%:There is no password set on this router. Please configure a root password to protect the web interface and enable SSH.%><br>

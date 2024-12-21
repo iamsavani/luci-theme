@@ -1,9 +1,4 @@
 #
-# Copyright (c) 2022-2023 SMALLPROGRAM <https://github.com/smallprogram>
-# Description: Auto compile
-#
-
-#
 # Fork and compile the latest version yourself using Github Actions
 #   1.Into the repository of your own fork
 #   2.Into the repository [Settings]
@@ -24,9 +19,9 @@ on:
     branches:
       - 'main'
     paths:
-      - 'luci-theme-neobird/Makefile'
+      - 'luci-theme-vayu/Makefile'
 env:
-  TZ: Asia/Shanghai
+  TZ: America/Toronto
 
 
 jobs:
@@ -35,7 +30,7 @@ jobs:
     name: Check Version
     runs-on: ubuntu-latest
     outputs:
-      neobird_version: ${{ steps.check_version.outputs.latest_version }}
+      vayu_version: ${{ steps.check_version.outputs.latest_version }}
       has_update: ${{ steps.check_version.outputs.has_update }}
     steps:
       - name: Checkout
@@ -68,8 +63,8 @@ jobs:
           tag_name: ${{steps.check_version.outputs.latest_version}}
 
 
-  job_build_neobird:
-    name: Build NeoBird (master)
+  job_build_vayu:
+    name: Build Vayu (main)
     needs: job_check
     #if: needs.job_check.outputs.has_update == 'true'
     runs-on: ubuntu-latest
@@ -87,7 +82,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: sdk
-          key: openwrt-sdk-snapshot-x86-64
+          key: openwrt-sdk-snapshot-ath79-nand
 
       - name: Initialization environment
         if: steps.cache-sdk.outputs.cache-hit != 'true'
@@ -102,41 +97,41 @@ jobs:
           echo "src-git-full packages https://github.com/openwrt/packages.git;master" >> feeds.conf
           echo "src-git-full luci https://github.com/openwrt/luci.git;master" >> feeds.conf
           echo "src-git-full routing https://git.openwrt.org/feed/routing.git;master"  >> feeds.conf
-          git clone -b main https://github.com/${{ github.repository }}.git package/downloads/luci-theme-neobird
+          git clone -b main https://github.com/${{ github.repository }}.git package/downloads/luci-theme-vayu
           ./scripts/feeds update -a
-          echo "CONFIG_PACKAGE_luci-theme-neobird=m" > .config
-          ./scripts/feeds install -d n luci-theme-neobird
+          echo "CONFIG_PACKAGE_luci-theme-vayu=m" > .config
+          ./scripts/feeds install -d n luci-theme-vayu
           make download -j8
 
-      - name: Configure neobird (master)
+      - name: Configure vayu (main)
         run: |
           cd sdk
-          ./scripts/feeds install luci-theme-neobird
+          ./scripts/feeds install luci-theme-vayu
           echo "CONFIG_ALL_NONSHARED=n" > .config
           echo "CONFIG_ALL_KMODS=n" >> .config
           echo "CONFIG_ALL=n" >> .config
           echo "CONFIG_AUTOREMOVE=n" >> .config
           echo "CONFIG_LUCI_LANG_zh_Hans=y" >> .config
-          echo "CONFIG_PACKAGE_luci-theme-neobird=m" >> .config
+          echo "CONFIG_PACKAGE_luci-theme-vayu=m" >> .config
           make defconfig
 
-      - name: Compile neobird (master)
+      - name: Compile vayu (main)
         id: compile
         run: |
           cd sdk
-          echo "make package/luci-theme-neobird/{clean,compile} -j$(nproc)"
-          make package/luci-theme-neobird/{clean,compile} -j$(nproc)
+          echo "make package/luci-theme-vayu/{clean,compile} -j$(nproc)"
+          make package/luci-theme-vayu/{clean,compile} -j$(nproc)
           mv bin/packages/mips_24kc/base/ ../
           rm .config .config.old
           cd ..
           echo "status=success" >> $GITHUB_OUTPUT
           echo "FIRMWARE=$PWD" >> $GITHUB_ENV
 
-      - name: Upload neobird (master) ipks to release
+      - name: Upload vayu (main) ipks to release
         uses: softprops/action-gh-release@v1
         if: steps.compile.outputs.status == 'success'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{needs.job_check.outputs.neobird_version}}
+          tag_name: ${{needs.job_check.outputs.vayu_version}}
           files: ${{ env.FIRMWARE }}/base/luci-theme*.*

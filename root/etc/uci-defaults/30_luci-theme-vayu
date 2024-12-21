@@ -1,0 +1,7 @@
+#!/bin/sh
+uci batch <<-EOF
+	set luci.themes.Vayu=/luci-static/vayu
+	set luci.main.mediaurlbase=/luci-static/vayu
+	commit luci
+EOF
+exit 0
